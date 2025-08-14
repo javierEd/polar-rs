@@ -6,6 +6,7 @@ pub enum PolarError {
 
 pub type PolarResult<T> = Result<T, PolarError>;
 
+#[allow(dead_code)]
 pub struct Polar {
     base_url: reqwest::Url,
     access_token: String,
