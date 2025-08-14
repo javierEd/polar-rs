@@ -1,0 +1,9 @@
+[package]
+name = "polar-rs"
+description = "Polar client library for Rust"
+authors = ["Javier E. <jaedns@gmail.com>"]
+version = "0.0.0-alpha.0"
+edition = "2024"
+
+[dependencies]
+reqwest = "0.12"
