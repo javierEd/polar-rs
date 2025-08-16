@@ -1,0 +1,29 @@
+{
+    "metadata": {},
+    "custom_field_data": {},
+    "discount_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+    "allow_discount_codes": true,
+    "require_billing_address": false,
+    "amount": 50000024,
+    "customer_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+    "is_business_customer": false,
+    "external_customer_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+    "customer_name": "<string>",
+    "customer_email": "jsmith@example.com",
+    "customer_ip_address": "<string>",
+    "customer_billing_name": "<string>",
+    "customer_billing_address": {
+        "line1": "<string>",
+        "line2": "<string>",
+        "postal_code": "<string>",
+        "city": "<string>",
+        "state": "<string>",
+        "country": "US"
+    },
+    "customer_tax_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+    "customer_metadata": {},
+    "subscription_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+    "success_url": "http://example.com/success",
+    "embed_origin": "<string>",
+    "products": ["00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c"]
+}

@@ -12,4 +12,13 @@ edition = "2024"
 publish = true
 
 [dependencies]
-reqwest = "0.12"
+chrono = { version = "0.4", features = ["serde"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+url = { version = "2.5", features = ["serde"] }
+uuid = { version = "1.18", features = ["serde", "v4"] }
+
+[dev-dependencies]
+serde_json = "1.0.142"
+tokio = { version = "1.47.1", features = ["macros"] }
+wiremock = "0.6.4"
