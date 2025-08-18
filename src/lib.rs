@@ -28,10 +28,10 @@ pub enum PolarError {
 impl Display for PolarError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            PolarError::Request(msg) => write!(f, "Request error: {}", msg),
+            PolarError::Request(msg) => write!(f, "Request error: {msg}"),
             PolarError::Unauthorized => write!(f, "Unauthorized"),
-            PolarError::Unknown(msg) => write!(f, "Unknown error: {}", msg),
-            PolarError::Validation(msg) => write!(f, "Validation error: {:?}", msg),
+            PolarError::Unknown(msg) => write!(f, "Unknown error: {msg}"),
+            PolarError::Validation(msg) => write!(f, "Validation error: {msg}"),
         }
     }
 }
