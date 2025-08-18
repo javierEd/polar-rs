@@ -152,7 +152,7 @@ pub struct CheckoutSessionParams {
     /// Whether to require the customer to fill their full billing address, instead of just the country. Customers in the US will always be required to fill their full address, regardless of this setting. If you preset the billing address, this setting will be automatically set to `true`.
     pub require_billing_address: bool,
     /// Amount in cents, before discounts and taxes. Only useful for custom prices, it'll be ignored for fixed and free prices.
-    pub amount: u32,
+    pub amount: Option<u32>,
     /// ID of an existing customer in the organization. The customer data will be pre-filled in the checkout form. The resulting order will be linked to this customer.
     pub customer_id: Option<Uuid>,
     /// Whether the customer is a business or an individual. If `true`, the customer will be required to fill their full billing address and billing name.

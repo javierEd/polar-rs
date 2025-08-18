@@ -17,19 +17,23 @@ pub struct PolarValidationError {
     pub r#type: String,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Deserialize)]
 pub enum PolarError {
     Request(String),
     Unauthorized,
     Unknown(String),
-    Validation { details: Vec<PolarValidationError> },
+    Validation(String),
 }
 
-pub type PolarResult<T> = Result<T, PolarError>;
-
-pub struct Polar {
-    base_url: reqwest::Url,
-    access_token: String,
+impl Display for PolarError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            PolarError::Request(msg) => write!(f, "Request error: {}", msg),
+            PolarError::Unauthorized => write!(f, "Unauthorized"),
+            PolarError::Unknown(msg) => write!(f, "Unknown error: {}", msg),
+            PolarError::Validation(msg) => write!(f, "Validation error: {:?}", msg),
+        }
+    }
 }
 
 impl From<reqwest::Error> for PolarError {
@@ -44,14 +48,31 @@ impl From<url::ParseError> for PolarError {
     }
 }
 
+pub type PolarResult<T> = Result<T, PolarError>;
+
+pub struct Polar {
+    base_url: reqwest::Url,
+    access_token: String,
+}
+
 impl Polar {
     pub fn new<U: IntoUrl, T: Display>(base_url: U, access_token: T) -> PolarResult<Self> {
         if access_token.to_string().is_empty() {
             return Err(PolarError::Request("access_token cannot be empty".to_owned()));
         }
 
+        let base_url = if let Ok(mut url) = base_url.into_url() {
+            if !url.path().ends_with('/') {
+                url.set_path(&format!("{}/", url.path()))
+            }
+
+            url
+        } else {
+            return Err(PolarError::Request("base_url is not a valid URL".to_owned()));
+        };
+
         Ok(Self {
-            base_url: base_url.into_url()?,
+            base_url,
             access_token: access_token.to_string(),
         })
     }
@@ -70,14 +91,17 @@ impl Polar {
 
         match response.status() {
             StatusCode::CREATED => Ok(response.json().await.unwrap()),
-            StatusCode::UNPROCESSABLE_ENTITY => Err(PolarError::Validation {
-                details: response.json().await?,
-            }),
+            StatusCode::UNPROCESSABLE_ENTITY => Err(PolarError::Validation(response.text().await?)),
             StatusCode::UNAUTHORIZED => Err(PolarError::Unauthorized),
             _ => Err(PolarError::Unknown(response.text().await?)),
         }
     }
 
+    /// **Create a checkout session.**
+    ///
+    ///Scopes: `checkouts:write`
+    ///
+    /// https://docs.polar.sh/api-reference/checkouts/create-session
     pub async fn create_checkout_session(&self, params: &CheckoutSessionParams) -> PolarResult<CheckoutSession> {
         self.post("checkouts", params).await
     }
