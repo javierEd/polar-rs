@@ -10,7 +10,7 @@
 
 - [ ] **Checkouts**
   - [x] Create checkout session
-  - [ ] Get checkout session
+  - [x] Get checkout session
   - [ ] List checkout sessions
   - [ ] Update checkout session
   - [ ] Get checkout session from client

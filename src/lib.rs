@@ -9,16 +9,11 @@ mod models;
 
 pub use enums::*;
 pub use models::*;
-
-#[derive(Debug, Deserialize)]
-pub struct PolarValidationError {
-    pub loc: Vec<String>,
-    pub msg: String,
-    pub r#type: String,
-}
+use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
 pub enum PolarError {
+    NotFound,
     Request(String),
     Unauthorized,
     Unknown(String),
@@ -29,6 +24,7 @@ impl Display for PolarError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             PolarError::Request(msg) => write!(f, "Request error: {msg}"),
+            PolarError::NotFound => write!(f, "Not found"),
             PolarError::Unauthorized => write!(f, "Unauthorized"),
             PolarError::Unknown(msg) => write!(f, "Unknown error: {msg}"),
             PolarError::Validation(msg) => write!(f, "Validation error: {msg}"),
@@ -77,6 +73,25 @@ impl Polar {
         })
     }
 
+    pub async fn get<T>(&self, path: &str) -> PolarResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        let response = reqwest::Client::new()
+            .get(self.base_url.join(path)?)
+            .bearer_auth(&self.access_token)
+            .send()
+            .await?;
+
+        match response.status() {
+            StatusCode::OK => Ok(response.json().await.unwrap()),
+            StatusCode::NOT_FOUND => Err(PolarError::NotFound),
+            StatusCode::UNPROCESSABLE_ENTITY => Err(PolarError::Validation(response.text().await?)),
+            StatusCode::UNAUTHORIZED => Err(PolarError::Unauthorized),
+            _ => Err(PolarError::Unknown(response.text().await?)),
+        }
+    }
+
     pub async fn post<P, T>(&self, path: &str, params: &P) -> PolarResult<T>
     where
         P: Serialize,
@@ -104,6 +119,15 @@ impl Polar {
     /// https://docs.polar.sh/api-reference/checkouts/create-session
     pub async fn create_checkout_session(&self, params: &CheckoutSessionParams) -> PolarResult<CheckoutSession> {
         self.post("checkouts", params).await
+    }
+
+    /// Get a checkout session by ID.
+    ///
+    /// Scopes: `checkouts:read` `checkouts:write`
+    ///
+    /// https://docs.polar.sh/api-reference/checkouts/get-session
+    pub async fn get_checkout_session(&self, id: Uuid) -> PolarResult<CheckoutSession> {
+        self.get(&format!("checkouts/{id}")).await
     }
 }
 
@@ -182,6 +206,42 @@ mod tests {
         let params = get_fixture("checkout_session_params");
 
         let result = polar.create_checkout_session(&params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_checkout_session() {
+        let checkout_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/checkouts/{}", checkout_id),
+            200,
+            get_fixture::<Value>("checkout_session"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_checkout_session(checkout_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_checkout_session() {
+        let checkout_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/checkouts/{}", checkout_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_checkout_session(checkout_id).await;
 
         assert!(result.is_err());
     }
