@@ -28,7 +28,7 @@ pub enum BillingAddressField {
     Disabled,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, PartialEq)]
 #[serde(rename_all = "lowercase")]
 pub enum CheckoutSessionStatus {
     Open,
@@ -36,6 +36,12 @@ pub enum CheckoutSessionStatus {
     Confirmed,
     Succeeded,
     Failed,
+}
+
+impl CheckoutSessionStatus {
+    pub fn is_succeeded(&self) -> bool {
+        *self == Self::Succeeded
+    }
 }
 
 #[derive(Deserialize)]
