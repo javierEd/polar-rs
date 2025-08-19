@@ -7,7 +7,7 @@ readme = "README.md"
 license = "MIT"
 categories = ["api-bindings", "finance"]
 keywords = ["api", "payments", "polar"]
-version = "0.0.0-alpha.0"
+version = "0.0.0-alpha.2"
 edition = "2024"
 publish = true
 
@@ -19,6 +19,6 @@ url = { version = "2.5", features = ["serde"] }
 uuid = { version = "1.18", features = ["serde", "v4"] }
 
 [dev-dependencies]
-serde_json = "1.0.142"
+serde_json = "1.0.143"
 tokio = { version = "1.47.1", features = ["macros"] }
 wiremock = "0.6.4"
