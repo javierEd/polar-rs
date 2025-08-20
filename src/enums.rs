@@ -28,7 +28,7 @@ pub enum BillingAddressField {
     Disabled,
 }
 
-#[derive(Deserialize, PartialEq)]
+#[derive(Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CheckoutSessionStatus {
     Open,
@@ -137,6 +137,20 @@ pub enum ProrationBehavior {
 pub enum RecurringInterval {
     Month,
     Year,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum Sorting {
+    CreatedAt,
+    #[serde(rename = "-created_at")]
+    CreatedAtDesc,
+    ExpiresAt,
+    #[serde(rename = "-expires_at")]
+    ExpiresAtDesc,
+    Status,
+    #[serde(rename = "-status")]
+    StatusDesc,
 }
 
 #[derive(Deserialize)]

@@ -12,6 +12,7 @@ mod models;
 
 pub use enums::*;
 pub use models::*;
+use serde_json::Value;
 use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
@@ -32,6 +33,12 @@ impl Display for PolarError {
             PolarError::Unknown(msg) => write!(f, "Unknown error: {msg}"),
             PolarError::Validation(msg) => write!(f, "Validation error: {msg}"),
         }
+    }
+}
+
+impl From<serde_json::Error> for PolarError {
+    fn from(err: serde_json::Error) -> Self {
+        PolarError::Request(err.to_string())
     }
 }
 
@@ -101,8 +108,28 @@ impl Polar {
     where
         T: DeserializeOwned,
     {
+        self.get_with_params(path, &()).await
+    }
+
+    pub async fn get_with_params<P, T>(&self, path: &str, params: &P) -> PolarResult<T>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        let mut url = self.base_url.join(path)?;
+
+        if let Ok(Value::Object(value)) = serde_json::to_value(params) {
+            let mut query_pairs = url.query_pairs_mut();
+
+            value.iter().for_each(|(k, v)| {
+                if let Some(v) = v.as_str() {
+                    query_pairs.append_pair(k, v);
+                }
+            });
+        }
+
         let response = reqwest::Client::new()
-            .get(self.base_url.join(path)?)
+            .get(url)
             .bearer_auth(&self.access_token)
             .send()
             .await?;
@@ -173,6 +200,18 @@ impl Polar {
     /// Reference: <https://docs.polar.sh/api-reference/checkouts/get-session>
     pub async fn get_checkout_session(&self, id: Uuid) -> PolarResult<CheckoutSession> {
         self.get(&format!("checkouts/{id}")).await
+    }
+
+    /// **List checkout sessions.**
+    ///
+    /// Scopes: `checkouts:read` `checkouts:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/checkouts/list-sessions>
+    pub async fn list_checkout_sessions(
+        &self,
+        params: &ListCheckoutSessionsParams,
+    ) -> PolarResult<Page<CheckoutSession>> {
+        self.get_with_params("checkouts", params).await
     }
 
     /// **Get a subscription by ID.**
@@ -316,6 +355,19 @@ mod tests {
         let result = polar.get_checkout_session(checkout_id).await;
 
         assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_list_checkout_sessions() {
+        let mock = get_mock("GET", "/checkouts", 200, get_fixture::<Value>("checkout_sessions_list")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar
+            .list_checkout_sessions(&ListCheckoutSessionsParams::default())
+            .await;
+
+        assert!(result.is_ok());
     }
 
     #[tokio::test]

@@ -14,7 +14,7 @@
 | ------------------------------------ | ------ |
 | Create checkout session              | ✅     |
 | Get checkout session                 | ✅     |
-| List checkout sessions               | ⏳     |
+| List checkout sessions               | ✅     |
 | Update checkout session              | ⏳     |
 | Get checkout session from client     | ⏳     |
 | Update checkout session from client  | ⏳     |
