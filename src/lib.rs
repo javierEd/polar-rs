@@ -78,6 +78,25 @@ impl Polar {
         })
     }
 
+    pub async fn delete<T>(&self, path: &str) -> PolarResult<T>
+    where
+        T: DeserializeOwned,
+    {
+        let response = reqwest::Client::new()
+            .delete(self.base_url.join(path)?)
+            .bearer_auth(&self.access_token)
+            .send()
+            .await?;
+
+        match response.status() {
+            StatusCode::OK => Ok(response.json().await.unwrap()),
+            StatusCode::NOT_FOUND => Err(PolarError::NotFound),
+            StatusCode::UNPROCESSABLE_ENTITY => Err(PolarError::Validation(response.text().await?)),
+            StatusCode::UNAUTHORIZED => Err(PolarError::Unauthorized),
+            _ => Err(PolarError::Unknown(response.text().await?)),
+        }
+    }
+
     pub async fn get<T>(&self, path: &str) -> PolarResult<T>
     where
         T: DeserializeOwned,
@@ -163,6 +182,15 @@ impl Polar {
     /// Reference: <https://docs.polar.sh/api-reference/subscriptions/update>
     pub async fn update_subscription(&self, id: Uuid, params: &SubscriptionParams) -> PolarResult<Subscription> {
         self.patch(&format!("subscriptions/{id}"), params).await
+    }
+
+    /// **Revoke a subscription, i.e cancel immediately.**
+    ///
+    /// Scopes: `subscriptions:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/subscriptions/revoke>
+    pub async fn revoke_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
+        self.delete(&format!("subscriptions/{id}")).await
     }
 }
 
@@ -317,6 +345,42 @@ mod tests {
         let params = get_fixture("subscription_params");
 
         let result = polar.update_subscription(subscription_id, &params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_revoke_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "DELETE",
+            &format!("/subscriptions/{}", subscription_id),
+            200,
+            get_fixture::<Value>("subscription"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.revoke_subscription(subscription_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_revoke_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "DELETE",
+            &format!("/subscriptions/{}", subscription_id),
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.revoke_subscription(subscription_id).await;
 
         assert!(result.is_err());
     }

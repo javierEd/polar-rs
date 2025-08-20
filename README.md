@@ -27,7 +27,7 @@
 | Get subscription    | ⏳     |
 | List subscriptions  | ⏳     |
 | Update subscription | ✅     |
-| Revoke subscription | ⏳     |
+| Revoke subscription | ✅     |
 
 ## Getting started
 
