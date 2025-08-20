@@ -97,12 +97,14 @@ impl Polar {
         }
     }
 
-    pub async fn get<T>(&self, path: &str) -> PolarResult<T>
+    pub async fn get<P, T>(&self, path: &str, params: Option<&P>) -> PolarResult<T>
     where
         T: DeserializeOwned,
     {
+        let url = self.base_url.join(path)?;
+        
         let response = reqwest::Client::new()
-            .get(self.base_url.join(path)?)
+            .get(url)
             .bearer_auth(&self.access_token)
             .send()
             .await?;
@@ -172,16 +174,25 @@ impl Polar {
     ///
     /// Reference: <https://docs.polar.sh/api-reference/checkouts/get-session>
     pub async fn get_checkout_session(&self, id: Uuid) -> PolarResult<CheckoutSession> {
-        self.get(&format!("checkouts/{id}")).await
+        self.get(&format!("checkouts/{id}", None)).await
     }
-
+    
+    /// **List checkout sessions.**
+    ///
+    /// Scopes: `checkouts:read` `checkouts:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/checkouts/list-sessions>
+    pub async fn list_checkout_sessions(&self, params: &ListCheckoutSessionsParams) -> PolarResult<Page<CheckoutSession>> {
+        self.get("checkouts", Some(params)).await
+    }
+    
     /// **Get a subscription by ID.**
     ///
     /// Scopes: `subscriptions:read` `subscriptions:write`
     ///
     /// Reference: <https://docs.polar.sh/api-reference/subscriptions/get>
     pub async fn get_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
-        self.get(&format!("subscriptions/{id}")).await
+        self.get(&format!("subscriptions/{id}", None)).await
     }
 
     /// **Update a subscription.**

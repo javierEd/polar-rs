@@ -302,6 +302,29 @@ pub struct Discount {
     pub code: Option<String>,
 }
 
+pub struct ListCheckoutSessionsParams {
+    /// Filter by organization ID.
+    pub organization_id: Option<Uuid>,
+    /// Filter by product ID.
+    pub product_id: Option<Uuid>,
+    /// Filter by customer ID.
+    pub customer_id: Option<Uuid>,
+    /// Filter by checkout session status.
+    pub status: Option<CheckoutSessionStatus>,
+    /// Filter by customer email.
+    pub query: Option<String>,
+    /// Page number, defaults to 1.
+    ///
+    /// Required range: `x > 0`
+    pub page: Option<usize>,
+    /// Size of a page, defaults to 10. Maximum is 100.
+    ///
+    /// Required range: `x > 0`
+    pub limit: Option<u8>,
+    /// Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign - before the criteria name to sort by descending order.
+    pub sorting: Option<Vec<Sorting>>,
+}
+
 #[derive(Deserialize)]
 pub struct Media {
     /// The ID of the object.
@@ -362,6 +385,16 @@ pub struct MeterFilterClause {
     pub value: Option<String>,
     pub conjunction: Option<MeterFilterConjunction>,
     pub clauses: Option<Vec<MeterFilterClause>>,
+}
+
+pub struct Page<T> {
+    pub items: Vec<T>,
+    pub pagination: Pagination,
+}
+
+pub struct Pagination {
+    pub total_count: usize,
+    pub max_page: usize,
 }
 
 #[derive(Deserialize)]

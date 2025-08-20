@@ -141,6 +141,20 @@ pub enum RecurringInterval {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "snake_case")]
+pub enum Sorting {
+    CreatedAt,
+    #[serde(rename = "-created_at")]
+    CreatedAtDesc,
+    ExpiresAt,
+    #[serde(rename = "-expires_at")]
+    ExpiresAtDesc, 
+    Status,
+    #[serde(rename = "-status")]
+    StatusDesc,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum SubscriptionStatus {
     Incomplete,
     IncompleteExpired,
