@@ -302,6 +302,7 @@ pub struct Discount {
     pub code: Option<String>,
 }
 
+#[derive(Default, Serialize)]
 pub struct ListCheckoutSessionsParams {
     /// Filter by organization ID.
     pub organization_id: Option<Uuid>,
@@ -387,11 +388,13 @@ pub struct MeterFilterClause {
     pub clauses: Option<Vec<MeterFilterClause>>,
 }
 
+#[derive(Deserialize)]
 pub struct Page<T> {
     pub items: Vec<T>,
     pub pagination: Pagination,
 }
 
+#[derive(Deserialize)]
 pub struct Pagination {
     pub total_count: usize,
     pub max_page: usize,
