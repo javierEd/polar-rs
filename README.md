@@ -24,7 +24,7 @@
 
 | Description         | Status |
 | ------------------- | ------ |
-| Get subscription    | ⏳     |
+| Get subscription    | ✅     |
 | List subscriptions  | ⏳     |
 | Update subscription | ✅     |
 | Revoke subscription | ✅     |

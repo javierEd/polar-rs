@@ -175,6 +175,15 @@ impl Polar {
         self.get(&format!("checkouts/{id}")).await
     }
 
+    /// **Get a subscription by ID.**
+    ///
+    /// Scopes: `subscriptions:read` `subscriptions:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/subscriptions/get>
+    pub async fn get_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
+        self.get(&format!("subscriptions/{id}")).await
+    }
+
     /// **Update a subscription.**
     ///
     /// Scopes: `subscriptions:write`
@@ -305,6 +314,42 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.get_checkout_session(checkout_id).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/subscriptions/{}", subscription_id),
+            200,
+            get_fixture::<Value>("subscription"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_subscription(subscription_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/subscriptions/{}", subscription_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_subscription(subscription_id).await;
 
         assert!(result.is_err());
     }
