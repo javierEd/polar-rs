@@ -8,11 +8,39 @@
 
 ## Features
 
-- [ ] **Checkouts**
-  - [x] Create checkout session
-  - [x] Get checkout session
-  - [ ] List checkout sessions
-  - [ ] Update checkout session
-  - [ ] Get checkout session from client
-  - [ ] Update checkout session from client
-  - [ ] Confirm checkout session from client
+### **Checkouts**
+
+| Description                          | Status |
+| ------------------------------------ | ------ |
+| Create checkout session              | ✅     |
+| Get checkout session                 | ✅     |
+| List checkout sessions               | ⏳     |
+| Update checkout session              | ⏳     |
+| Get checkout session from client     | ⏳     |
+| Update checkout session from client  | ⏳     |
+| Confirm checkout session from client | ⏳     |
+
+### **Subscriptions**
+
+| Description         | Status |
+| ------------------- | ------ |
+| Get subscription    | ⏳     |
+| List subscriptions  | ⏳     |
+| Update subscription | ✅     |
+| Revoke subscription | ⏳     |
+
+## Getting started
+
+- Installation
+
+```bash
+cargo add polar-rs
+```
+
+- Example usage
+
+```rust
+use polar_rs::Polar;
+
+let polar = Polar::new("https://sandbox-api.polar.sh/v1/", "<YOUR ACCESS TOKEN>");
+```
