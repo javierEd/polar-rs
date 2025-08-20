@@ -1,3 +1,6 @@
+#![doc = include_str!("../README.md")]
+
+use std::error::Error;
 use std::fmt::Display;
 
 use reqwest::{IntoUrl, StatusCode};
@@ -43,6 +46,8 @@ impl From<url::ParseError> for PolarError {
         PolarError::Request(err.to_string())
     }
 }
+
+impl Error for PolarError {}
 
 pub type PolarResult<T> = Result<T, PolarError>;
 
@@ -92,6 +97,27 @@ impl Polar {
         }
     }
 
+    pub async fn patch<P, T>(&self, path: &str, params: &P) -> PolarResult<T>
+    where
+        P: Serialize,
+        T: DeserializeOwned,
+    {
+        let response = reqwest::Client::new()
+            .patch(self.base_url.join(path)?)
+            .bearer_auth(&self.access_token)
+            .json(params)
+            .send()
+            .await?;
+
+        match response.status() {
+            StatusCode::OK => Ok(response.json().await.unwrap()),
+            StatusCode::NOT_FOUND => Err(PolarError::NotFound),
+            StatusCode::UNPROCESSABLE_ENTITY => Err(PolarError::Validation(response.text().await?)),
+            StatusCode::UNAUTHORIZED => Err(PolarError::Unauthorized),
+            _ => Err(PolarError::Unknown(response.text().await?)),
+        }
+    }
+
     pub async fn post<P, T>(&self, path: &str, params: &P) -> PolarResult<T>
     where
         P: Serialize,
@@ -114,20 +140,29 @@ impl Polar {
 
     /// **Create a checkout session.**
     ///
-    ///Scopes: `checkouts:write`
+    /// Scopes: `checkouts:write`
     ///
-    /// https://docs.polar.sh/api-reference/checkouts/create-session
+    /// Reference: <https://docs.polar.sh/api-reference/checkouts/create-session>
     pub async fn create_checkout_session(&self, params: &CheckoutSessionParams) -> PolarResult<CheckoutSession> {
         self.post("checkouts", params).await
     }
 
-    /// Get a checkout session by ID.
+    /// **Get a checkout session by ID.**
     ///
     /// Scopes: `checkouts:read` `checkouts:write`
     ///
-    /// https://docs.polar.sh/api-reference/checkouts/get-session
+    /// Reference: <https://docs.polar.sh/api-reference/checkouts/get-session>
     pub async fn get_checkout_session(&self, id: Uuid) -> PolarResult<CheckoutSession> {
         self.get(&format!("checkouts/{id}")).await
+    }
+
+    /// **Update a subscription.**
+    ///
+    /// Scopes: `subscriptions:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/subscriptions/update>
+    pub async fn update_subscription(&self, id: Uuid, params: &SubscriptionParams) -> PolarResult<Subscription> {
+        self.patch(&format!("subscriptions/{id}"), params).await
     }
 }
 
@@ -242,6 +277,46 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.get_checkout_session(checkout_id).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_update_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/subscriptions/{}", subscription_id),
+            200,
+            get_fixture::<Value>("subscription"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("subscription_params");
+
+        let result = polar.update_subscription(subscription_id, &params).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_update_subscription() {
+        let subscription_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/subscriptions/{}", subscription_id),
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("subscription_params");
+
+        let result = polar.update_subscription(subscription_id, &params).await;
 
         assert!(result.is_err());
     }

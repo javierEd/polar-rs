@@ -1,4 +1,4 @@
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -44,6 +44,19 @@ impl CheckoutSessionStatus {
     }
 }
 
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CustomerCancellationReason {
+    CustomerService,
+    LowQuality,
+    MissingFeatures,
+    SwitchedService,
+    TooComplex,
+    TooExpensive,
+    Unused,
+    Other,
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CustomFieldType {
@@ -71,6 +84,36 @@ pub enum DiscountType {
 
 #[derive(Deserialize)]
 #[serde(rename_all = "lowercase")]
+pub enum MeterAggregationFunc {
+    Count,
+    Sum,
+    Max,
+    Min,
+    Avg,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum MeterFilterConjunction {
+    And,
+    Or,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MeterFilterOperator {
+    Eq,
+    Ne,
+    Gt,
+    Gte,
+    Lt,
+    Lte,
+    Like,
+    NotLike,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "lowercase")]
 pub enum PaymentProcessor {
     Stripe,
 }
@@ -82,9 +125,28 @@ pub enum PriceType {
     Recurring,
 }
 
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum ProrationBehavior {
+    Invoice,
+    Prorate,
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RecurringInterval {
     Month,
     Year,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SubscriptionStatus {
+    Incomplete,
+    IncompleteExpired,
+    Trialing,
+    Active,
+    PastDue,
+    Cancelled,
+    Unpaid,
 }

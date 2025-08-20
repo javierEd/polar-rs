@@ -5,10 +5,7 @@ use serde::{Deserialize, Serialize};
 use url::Url;
 use uuid::Uuid;
 
-use crate::{
-    AmountType, BenefitType, BillingAddressField, CheckoutSessionStatus, CustomFieldType, DiscountDuration,
-    DiscountType, PaymentProcessor, PriceType, RecurringInterval,
-};
+use crate::enums::*;
 
 #[derive(Deserialize)]
 pub struct AttachedCustomField {
@@ -50,6 +47,34 @@ pub struct BillingAddressFields {
     pub postal_code: BillingAddressField,
     pub line1: BillingAddressField,
     pub line2: BillingAddressField,
+}
+
+#[derive(Deserialize)]
+pub struct CheckoutProduct {
+    /// Creation timestamp of the object.
+    pub created_at: DateTime<Utc>,
+    /// Last modification timestamp of the object.
+    pub modified_at: Option<DateTime<Utc>>,
+    /// The ID of the product.
+    pub id: Uuid,
+    /// The name of the product.
+    pub name: String,
+    /// The description of the product.
+    pub description: Option<String>,
+    /// The recurring interval of the product. If `None`, the product is a one-time purchase.
+    pub recurring_interval: Option<RecurringInterval>,
+    /// Whether the product is a subscription.
+    pub is_recurring: bool,
+    /// Whether the product is archived and no longer available.
+    pub is_archived: bool,
+    /// The ID of the organization owning the product.
+    pub organization_id: Uuid,
+    /// List of prices for this product.
+    pub prices: Vec<Price>,
+    /// List of benefits granted by the product.
+    pub benefits: Vec<Benefit>,
+    /// List of medias associated to the product.
+    pub medias: Vec<Media>,
 }
 
 #[derive(Deserialize)]
@@ -124,9 +149,9 @@ pub struct CheckoutSession {
     pub metadata: HashMap<String, String>,
     pub external_customer_id: Option<String>,
     /// List of products available to select.
-    pub products: Vec<Product>,
+    pub products: Vec<CheckoutProduct>,
     /// Product selected to checkout.
-    pub product: Product,
+    pub product: CheckoutProduct,
     /// Price of the selected product.
     pub product_price: Price,
     /// Schema for a percentage discount that is applied on every invoice for a certain number of months.
@@ -223,6 +248,33 @@ pub struct CustomFieldProperties {
     pub options: Option<Vec<CustomFieldOption>>,
 }
 
+#[derive(Deserialize)]
+pub struct Customer {
+    /// The ID of the customer.
+    pub id: Uuid,
+    /// Creation timestamp of the object.
+    pub created_at: DateTime<Utc>,
+    /// Last modification timestamp of the object.
+    pub modified_at: Option<DateTime<Utc>>,
+    pub metadata: HashMap<String, String>,
+    /// The ID of the customer in your system. This must be unique within the organization. Once set, it can't be updated.
+    pub external_id: Option<String>,
+    /// The email address of the customer. This must be unique within the organization.
+    pub email: String,
+    /// Whether the customer email address is verified. The address is automatically verified when the customer accesses the customer portal using their email address.
+    pub email_verified: bool,
+    /// The name of the customer.
+    pub name: Option<String>,
+    pub billing_address: Option<CustomerBillingAddress>,
+    /// Required array length: 2 elements
+    pub tax_id: Option<Vec<String>>,
+    /// The ID of the organization owning the customer.
+    pub organization_id: Uuid,
+    /// Timestamp for when the customer was soft deleted.
+    pub deleted_at: Option<DateTime<Utc>>,
+    pub avatar_url: String,
+}
+
 #[derive(Deserialize, Serialize)]
 pub struct CustomerBillingAddress {
     /// Examples: `"US"` `"SE"` `"FR"`
@@ -274,10 +326,42 @@ pub struct Media {
 
 #[derive(Deserialize)]
 pub struct Meter {
+    pub metadata: HashMap<String, String>,
+    /// Creation timestamp of the object.
+    pub created_at: DateTime<Utc>,
+    /// Last modification timestamp of the object.
+    pub modified_at: Option<DateTime<Utc>>,
     /// The ID of the object.
     pub id: Uuid,
-    /// The name of the meter.
+    /// The name of the meter. Will be shown on customer's invoices and usage.
     pub name: String,
+    /// The filter to apply on events that'll be used to calculate the meter.
+    pub filter: MeterFilter,
+    /// The aggregation to apply on the filtered events to calculate the meter.
+    pub aggregation: MeterAggregation,
+    /// The ID of the organization owning the meter.
+    pub organization_id: Uuid,
+}
+
+#[derive(Deserialize)]
+pub struct MeterAggregation {
+    pub func: MeterAggregationFunc,
+    pub property: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub struct MeterFilter {
+    pub conjunction: MeterFilterConjunction,
+    pub clauses: Vec<MeterFilterClause>,
+}
+
+#[derive(Deserialize)]
+pub struct MeterFilterClause {
+    pub property: Option<String>,
+    pub operator: Option<MeterFilterOperator>,
+    pub value: Option<String>,
+    pub conjunction: Option<MeterFilterConjunction>,
+    pub clauses: Option<Vec<MeterFilterClause>>,
 }
 
 #[derive(Deserialize)]
@@ -311,7 +395,15 @@ pub struct Price {
     /// The ID of the meter associated to the price. Only for `amount_type: UnitMetered`.
     pub meter_id: Option<Uuid>,
     /// The meter associated to the price. Only for `amount_type: UnitMetered`.
-    pub meter: Option<Meter>,
+    pub meter: Option<PriceMeter>,
+}
+
+#[derive(Deserialize)]
+pub struct PriceMeter {
+    /// The ID of the object.
+    pub id: Uuid,
+    /// The name of the meter.
+    pub name: String,
 }
 
 #[derive(Deserialize)]
@@ -334,10 +426,107 @@ pub struct Product {
     pub is_archived: bool,
     /// The ID of the organization owning the product.
     pub organization_id: Uuid,
+    pub metadata: HashMap<String, String>,
     /// List of prices for this product.
     pub prices: Vec<Price>,
     /// List of benefits granted by the product.
     pub benefits: Vec<Benefit>,
     /// List of medias associated to the product.
     pub medias: Vec<Media>,
+    /// List of custom fields attached to the product.
+    pub attached_custom_fields: Vec<AttachedCustomField>,
+}
+
+#[derive(Deserialize)]
+pub struct Subscription {
+    /// Creation timestamp of the object.
+    pub created_at: DateTime<Utc>,
+    /// Last modification timestamp of the object.
+    pub modified_at: Option<DateTime<Utc>>,
+    /// The ID of the object.
+    pub id: Uuid,
+    /// The amount of the subscription.
+    pub amount: u32,
+    /// The currency of the subscription.
+    pub currency: String,
+    /// The interval at which the subscription recurs.
+    pub recurring_interval: RecurringInterval,
+    /// The status of the subscription.
+    pub status: SubscriptionStatus,
+    /// The start timestamp of the current billing period.
+    pub current_period_start: DateTime<Utc>,
+    /// The end timestamp of the current billing period.
+    pub current_period_end: Option<DateTime<Utc>>,
+    /// Whether the subscription will be canceled at the end of the current period.
+    pub cancel_at_period_end: bool,
+    /// The timestamp when the subscription was canceled. The subscription might still be active if `cancel_at_period_end` is `true`.
+    pub canceled_at: Option<DateTime<Utc>>,
+    /// The timestamp when the subscription started.
+    pub started_at: Option<DateTime<Utc>>,
+    /// The timestamp when the subscription will end.
+    pub ends_at: Option<DateTime<Utc>>,
+    /// The timestamp when the subscription ended.
+    pub ended_at: Option<DateTime<Utc>>,
+    /// The ID of the subscribed customer.
+    pub customer_id: Uuid,
+    /// The ID of the subscribed product.
+    pub product_id: Uuid,
+    /// The ID of the applied discount, if any.
+    pub discount_id: Option<Uuid>,
+    pub checkout_id: Option<Uuid>,
+    pub customer_cancellation_reason: Option<CustomerCancellationReason>,
+    pub customer_cancellation_comment: Option<String>,
+    pub metadata: HashMap<String, String>,
+    pub customer: Customer,
+    /// A product.
+    pub product: Product,
+    pub discount: Option<Discount>,
+    /// List of enabled prices for the subscription.
+    pub prices: Vec<Price>,
+    /// List of meters associated with the subscription.
+    pub meters: Vec<SubscriptionMeter>,
+    // Key-value object storing custom field values.
+    pub custom_field_data: HashMap<String, String>,
+}
+
+#[derive(Deserialize)]
+pub struct SubscriptionMeter {
+    /// Creation timestamp of the object.
+    pub created_at: DateTime<Utc>,
+    /// Last modification timestamp of the object.
+    pub modified_at: Option<DateTime<Utc>>,
+    /// The ID of the object.
+    pub id: Uuid,
+    /// The number of consumed units so far in this billing period.
+    pub consumed_units: usize,
+    /// The number of credited units so far in this billing period.
+    pub credited_units: usize,
+    /// The amount due in cents so far in this billing period.
+    pub amount: u32,
+    /// The ID of the meter.
+    pub meter_id: Uuid,
+    /// The meter associated with this subscription.
+    pub meter: Meter,
+}
+
+#[derive(Default, Deserialize, Serialize)]
+pub struct SubscriptionParams {
+    /// Update subscription to another product.
+    pub product_id: Option<Uuid>,
+    /// Determine how to handle the proration billing. If not provided, will use the default organization setting.
+    pub proration_behavior: Option<ProrationBehavior>,
+    /// Update the subscription to apply a new discount. If set to `None`, the discount will be removed. The change will be applied on the next billing cycle.
+    pub discount_id: Option<Uuid>,
+    /// Cancel an active subscription once the current period ends.
+    ///
+    /// Or uncancel a subscription currently set to be revoked at period end.
+    pub cancel_at_period_end: Option<bool>,
+    /// Customer reason for cancellation. Helpful to monitor reasons behind churn for future improvements.
+    ///
+    /// Only set this in case your own service is requesting the reason from the customer. Or you know based on direct conversations, i.e support, with the customer.
+    pub customer_cancellation_reason: Option<CustomerCancellationReason>,
+    /// Customer feedback and why they decided to cancel.
+    pub customer_cancellation_comment: Option<String>,
+    /// Cancel and revoke an active subscription immediately
+    pub revoke: Option<bool>,
 }
