@@ -6,14 +6,14 @@ use std::fmt::Display;
 use reqwest::{IntoUrl, StatusCode};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
+use uuid::Uuid;
 
 mod enums;
 mod models;
 
 pub use enums::*;
 pub use models::*;
-use serde_json::Value;
-use uuid::Uuid;
 
 #[derive(Debug, Deserialize)]
 pub enum PolarError {
@@ -246,7 +246,7 @@ impl Polar {
 mod tests {
     use std::{fs::File, io::BufReader};
 
-    use serde_json::{Value, from_reader};
+    use serde_json::from_reader;
     use wiremock::{Mock, MockServer, ResponseTemplate, matchers};
 
     use super::*;
