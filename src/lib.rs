@@ -181,7 +181,7 @@ impl Polar {
     ///
     /// Reference: <https://docs.polar.sh/api-reference/subscriptions/get>
     pub async fn get_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
-        self.get(&format!("subcriptions/{id}")).await
+        self.get(&format!("subscriptions/{id}")).await
     }
 
     /// **Update a subscription.**
