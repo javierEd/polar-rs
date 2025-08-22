@@ -295,6 +295,15 @@ impl Polar {
         self.patch(&format!("products/{id}/benefits"), &json!({ "benefits": benefits }))
             .await
     }
+
+    /// **Create a meter.**
+    ///
+    /// Scopes: `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/create>
+    pub async fn create_meter(&self, params: &MeterParams) -> PolarResult<Meter> {
+        self.post("meters", params).await
+    }
 }
 
 #[cfg(test)]
@@ -693,6 +702,32 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.update_product_benefits(product_id, vec![Uuid::new_v4()]).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_create_meter() {
+        let mock = get_mock("POST", "/meters", 201, get_fixture::<Value>("meter")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("meter_params");
+
+        let result = polar.create_meter(&params).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_create_meter() {
+        let mock = get_mock("POST", "/meters", 422, get_fixture::<Value>("unprocessable_entity")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("meter_params");
+
+        let result = polar.create_meter(&params).await;
 
         assert!(result.is_err());
     }

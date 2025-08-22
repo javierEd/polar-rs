@@ -1,0 +1,18 @@
+{
+    "metadata": {},
+    "name": "<string>",
+    "filter": {
+        "conjunction": "and",
+        "clauses": [
+            {
+                "property": "<string>",
+                "operator": "eq",
+                "value": "<string>"
+            }
+        ]
+    },
+    "aggregation": {
+        "func": "count"
+    },
+    "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+}

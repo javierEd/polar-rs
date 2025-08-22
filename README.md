@@ -39,6 +39,16 @@
 | Update product          | ✅     |
 | Update product benefits | ✅     |
 
+### Meters
+
+| Description          | Status |
+| -------------------- | ------ |
+| Create meter         | ✅     |
+| Get meter            | ⏳     |
+| List meters          | ⏳     |
+| Update meter         | ⏳     |
+| Get meter quantities | ⏳     |
+
 ## Getting started
 
 - Installation
