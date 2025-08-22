@@ -250,6 +250,15 @@ impl Polar {
         self.get(&format!("products/{id}")).await
     }
 
+    /// **List products.**
+    ///
+    /// Scopes: `products:read` `products:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/products/list>
+    pub async fn list_products(&self, params: &ListProductsParams) -> PolarResult<Page<Product>> {
+        self.get_with_params("products", params).await
+    }
+
     /// **Create a product.**
     ///
     /// Scopes: `products:write`
@@ -553,6 +562,17 @@ mod tests {
         let result = polar.get_product(product_id).await;
 
         assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_list_products() {
+        let mock = get_mock("GET", "/products", 200, get_fixture::<Value>("products_list")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.list_products(&ListProductsParams::default()).await;
+
+        assert!(result.is_ok());
     }
 
     #[tokio::test]
