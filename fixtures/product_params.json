@@ -1,0 +1,21 @@
+{
+    "metadata": {},
+    "name": "<string>",
+    "description": "<string>",
+    "recurring_interval": "month",
+    "prices": [
+        {
+            "amount_type": "fixed",
+            "price_amount": 50000024,
+            "price_currency": "usd"
+        }
+    ],
+    "medias": ["00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c"],
+    "attached_custom_fields": [
+        {
+            "custom_field_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+            "required": true
+        }
+    ],
+    "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737"
+}

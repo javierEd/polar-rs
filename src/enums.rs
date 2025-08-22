@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AmountType {
     Fixed,
@@ -132,7 +132,7 @@ pub enum ProrationBehavior {
     Prorate,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RecurringInterval {
     Month,
