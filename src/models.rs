@@ -431,25 +431,41 @@ pub struct Meter {
     pub organization_id: Uuid,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct MeterAggregation {
     pub func: MeterAggregationFunc,
     pub property: Option<String>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct MeterFilter {
     pub conjunction: MeterFilterConjunction,
     pub clauses: Vec<MeterFilterClause>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 pub struct MeterFilterClause {
     pub property: Option<String>,
     pub operator: Option<MeterFilterOperator>,
     pub value: Option<String>,
     pub conjunction: Option<MeterFilterConjunction>,
     pub clauses: Option<Vec<MeterFilterClause>>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct MeterParams {
+    /// The name of the meter. Will be shown on customer's invoices and usage.
+    ///
+    /// Minimum length: `3`
+    pub name: String,
+    /// The filter to apply on events that'll be used to calculate the meter.
+    pub filter: MeterFilter,
+    /// The aggregation to apply on the filtered events to calculate the meter.
+    pub aggregation: MeterAggregation,
+    /// Key-value object allowing you to store additional information.
+    pub metadata: HashMap<String, String>,
+    /// The ID of the organization owning the meter. **Required unless you use an organization token**.
+    pub organization_id: Option<Uuid>,
 }
 
 #[derive(Deserialize)]
@@ -576,7 +592,7 @@ pub struct ProductParams {
     pub medias: Option<Vec<Uuid>>,
     /// List of custom fields to attach.
     pub attached_custom_fields: Vec<AttachedCustomFieldParams>,
-    /// The ID of the organization owning the product. `Required unless you use an organization token`.
+    /// The ID of the organization owning the product. **Required unless you use an organization token**.
     pub organization_id: Option<Uuid>,
 }
 

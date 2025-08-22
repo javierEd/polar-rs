@@ -96,7 +96,7 @@ pub enum DiscountType {
     Percentage,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MeterAggregationFunc {
     Count,
@@ -106,14 +106,14 @@ pub enum MeterAggregationFunc {
     Avg,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MeterFilterConjunction {
     And,
     Or,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum MeterFilterOperator {
     Eq,
