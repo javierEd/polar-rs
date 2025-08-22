@@ -33,7 +33,7 @@
 
 | Description             | Status |
 | ----------------------- | ------ |
-| Get product             | ⏳     |
+| Get product             | ✅     |
 | List products           | ⏳     |
 | Create product          | ✅     |
 | Update product          | ⏳     |

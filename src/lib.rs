@@ -241,6 +241,15 @@ impl Polar {
         self.delete(&format!("subscriptions/{id}")).await
     }
 
+    /// **Get a product by ID.**
+    ///
+    /// Scopes: `products:read` `products:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/products/get>
+    pub async fn get_product(&self, id: Uuid) -> PolarResult<Product> {
+        self.get(&format!("products/{id}")).await
+    }
+
     /// **Create a product.**
     ///
     /// Scopes: `products:write`
@@ -487,6 +496,42 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.revoke_subscription(subscription_id).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_product() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/products/{}", product_id),
+            200,
+            get_fixture::<Value>("product"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_product(product_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_product() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/products/{}", product_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_product(product_id).await;
 
         assert!(result.is_err());
     }
