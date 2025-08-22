@@ -240,7 +240,7 @@ impl Polar {
     pub async fn revoke_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
         self.delete(&format!("subscriptions/{id}")).await
     }
-    
+
     /// **Create a product.**
     ///
     /// Scopes: `products:write`
@@ -487,6 +487,32 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.revoke_subscription(subscription_id).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_create_product() {
+        let mock = get_mock("POST", "/products", 201, get_fixture::<Value>("product")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("product_params");
+
+        let result = polar.create_product(&params).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_create_product() {
+        let mock = get_mock("POST", "/products", 422, get_fixture::<Value>("unprocessable_entity")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("product_params");
+
+        let result = polar.create_product(&params).await;
 
         assert!(result.is_err());
     }

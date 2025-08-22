@@ -19,6 +19,14 @@ pub struct AttachedCustomField {
     pub required: bool,
 }
 
+#[derive(Deserialize, Serialize)]
+pub struct AttachedCustomFieldParams {
+    /// ID of the custom field.
+    pub custom_field_id: Uuid,
+    /// Whether the value is required for this custom field.
+    pub required: bool,
+}
+
 #[derive(Deserialize)]
 pub struct Benefit {
     /// The ID of the benefit.
@@ -428,9 +436,9 @@ pub struct Price {
     pub unit_amount: Option<String>,
     /// The maximum amount in cents that can be charged, regardless of the number of units consumed. Only for `amount_type: MeteredUnit`.
     pub cap_amount: Option<u32>,
-    /// The ID of the meter associated to the price. Only for `amount_type: UnitMetered`.
+    /// The ID of the meter associated to the price. Only for `amount_type: MeteredUnit`.
     pub meter_id: Option<Uuid>,
-    /// The meter associated to the price. Only for `amount_type: UnitMetered`.
+    /// The meter associated to the price. Only for `amount_type: MeteredUnit`.
     pub meter: Option<PriceMeter>,
 }
 
@@ -440,6 +448,27 @@ pub struct PriceMeter {
     pub id: Uuid,
     /// The name of the meter.
     pub name: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct PriceParams {
+    pub amount_type: AmountType,
+    /// The currency. Not required for `amount_type: Free`.
+    pub price_currency: Option<String>,
+    /// The price in cents.  Only for `amount_type: Fixed`.
+    pub price_amount: Option<u32>,
+    /// The minimum amount the customer can pay. Only for `amount_type: Custom`.
+    pub minimum_amount: Option<u32>,
+    /// The maximum amount the customer can pay. Only for `amount_type: Custom`.
+    pub maximum_amount: Option<u32>,
+    /// The initial amount shown to the customer. Only for `amount_type: Custom`.
+    pub preset_amount: Option<u32>,
+    /// The ID of the meter associated to the price. Only for `amount_type: MeteredUnit`.
+    pub meter_id: Option<Uuid>,
+    /// The price per unit in cents. Only for `amount_type: MeteredUnit`.
+    pub unit_amount: Option<String>,
+    /// The maximum amount in cents that can be charged, regardless of the number of units consumed. Only for `amount_type: MeteredUnit`.
+    pub cap_amount: Option<u32>,
 }
 
 #[derive(Deserialize)]
@@ -481,6 +510,18 @@ pub struct ProductParams {
     pub name: String,
     /// The recurring interval of the product. If `None`, the product is a one-time purchase
     pub recurring_interval: Option<RecurringInterval>,
+    /// List of available prices for this product. It should contain at most one static price (fixed, custom or free), and any number of metered prices. Metered prices are not supported on one-time purchase products.
+    pub prices: Vec<PriceParams>,
+    /// Key-value object allowing you to store additional information.
+    pub metadata: HashMap<String, String>,
+    /// The description of the product.
+    pub description: Option<String>,
+    /// List of file IDs. Each one must be on the same organization as the product, of type `product_media` and correctly uploaded.
+    pub medias: Option<Vec<Uuid>>,
+    /// List of custom fields to attach.
+    pub attached_custom_fields: Vec<AttachedCustomFieldParams>,
+    /// The ID of the organization owning the product. `Required unless you use an organization token`.
+    pub organization_id: Option<Uuid>,
 }
 
 #[derive(Deserialize)]

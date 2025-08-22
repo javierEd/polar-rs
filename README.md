@@ -31,13 +31,13 @@
 
 ### Products
 
-| Description              | Status |
-| ------------------------ | ------ |
-| Get product              | ⏳     |
-| List products            | ⏳     |
-| Create product           | ⏳     |
-| Update product           | ⏳     |
-| Update product beneficts | ⏳     |
+| Description             | Status |
+| ----------------------- | ------ |
+| Get product             | ⏳     |
+| List products           | ⏳     |
+| Create product          | ✅     |
+| Update product          | ⏳     |
+| Update product benefits | ⏳     |
 
 ## Getting started
 
