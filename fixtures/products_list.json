@@ -1,0 +1,97 @@
+{
+    "items": [
+        {
+            "created_at": "2023-11-07T05:31:56Z",
+            "modified_at": "2023-11-07T05:31:56Z",
+            "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+            "name": "<string>",
+            "description": "<string>",
+            "recurring_interval": "month",
+            "is_recurring": true,
+            "is_archived": true,
+            "organization_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+            "metadata": {},
+            "prices": [
+                {
+                    "created_at": "2023-11-07T05:31:56Z",
+                    "modified_at": "2023-11-07T05:31:56Z",
+                    "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "amount_type": "fixed",
+                    "is_archived": true,
+                    "product_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "type": "one_time",
+                    "recurring_interval": "month",
+                    "price_currency": "usd",
+                    "price_amount": 123,
+                    "legacy": true
+                }
+            ],
+            "benefits": [
+                {
+                    "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "created_at": "2023-11-07T05:31:56Z",
+                    "modified_at": "2023-11-07T05:31:56Z",
+                    "type": "custom",
+                    "description": "<string>",
+                    "selectable": true,
+                    "deletable": true,
+                    "organization_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "metadata": {},
+                    "properties": {
+                        "note": "<string>"
+                    }
+                }
+            ],
+            "medias": [
+                {
+                    "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "organization_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "name": "<string>",
+                    "path": "<string>",
+                    "mime_type": "<string>",
+                    "size": 123,
+                    "storage_version": "<string>",
+                    "checksum_etag": "<string>",
+                    "checksum_sha256_base64": "<string>",
+                    "checksum_sha256_hex": "<string>",
+                    "last_modified_at": "2023-11-07T05:31:56Z",
+                    "version": "<string>",
+                    "service": "<string>",
+                    "is_uploaded": true,
+                    "created_at": "2023-11-07T05:31:56Z",
+                    "size_readable": "<string>",
+                    "public_url": "http://example.com/file"
+                }
+            ],
+            "attached_custom_fields": [
+                {
+                    "custom_field_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                    "custom_field": {
+                        "created_at": "2023-11-07T05:31:56Z",
+                        "modified_at": "2023-11-07T05:31:56Z",
+                        "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+                        "metadata": {},
+                        "type": "text",
+                        "slug": "<string>",
+                        "name": "<string>",
+                        "organization_id": "1dbfc517-0bbf-4301-9ba8-555ca42b9737",
+                        "properties": {
+                            "form_label": "<string>",
+                            "form_help_text": "<string>",
+                            "form_placeholder": "<string>",
+                            "textarea": true,
+                            "min_length": 1,
+                            "max_length": 1
+                        }
+                    },
+                    "order": 123,
+                    "required": true
+                }
+            ]
+        }
+    ],
+    "pagination": {
+        "total_count": 123,
+        "max_page": 123
+    }
+}
