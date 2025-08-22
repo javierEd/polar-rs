@@ -617,3 +617,48 @@ pub struct SubscriptionParams {
     /// Cancel and revoke an active subscription immediately
     pub revoke: Option<bool>,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct UpdatePriceParams {
+    /// If you want to keep the existing price.
+    pub id: Option<Uuid>,
+    pub amount_type: Option<AmountType>,
+    /// The currency. Not required for `amount_type: Free`.
+    pub price_currency: Option<String>,
+    /// The price in cents.  Only for `amount_type: Fixed`.
+    pub price_amount: Option<u32>,
+    /// The minimum amount the customer can pay. Only for `amount_type: Custom`.
+    pub minimum_amount: Option<u32>,
+    /// The maximum amount the customer can pay. Only for `amount_type: Custom`.
+    pub maximum_amount: Option<u32>,
+    /// The initial amount shown to the customer. Only for `amount_type: Custom`.
+    pub preset_amount: Option<u32>,
+    /// The ID of the meter associated to the price. Only for `amount_type: MeteredUnit`.
+    pub meter_id: Option<Uuid>,
+    /// The price per unit in cents. Only for `amount_type: MeteredUnit`.
+    pub unit_amount: Option<String>,
+    /// The maximum amount in cents that can be charged, regardless of the number of units consumed. Only for `amount_type: MeteredUnit`.
+    pub cap_amount: Option<u32>,
+}
+
+#[derive(Default, Deserialize, Serialize)]
+pub struct UpdateProductParams {
+    /// Key-value object allowing you to store additional information.
+    pub metadata: HashMap<String, String>,
+    /// The name of the product.
+    ///
+    /// Minimum length: `3`
+    pub name: String,
+    /// The description of the product.
+    pub description: Option<String>,
+    /// The recurring interval of the product. If `None`, the product is a one-time purchase
+    pub recurring_interval: Option<RecurringInterval>,
+    /// Whether the product is archived. If `true`, the product won't be available for purchase anymore. Existing customers will still have access to their benefits, and subscriptions will continue normally.
+    pub is_archived: Option<bool>,
+    /// List of available prices for this product. If you want to keep existing prices, include them in the list with only the `id`.
+    pub prices: Vec<UpdatePriceParams>,
+    /// List of file IDs. Each one must be on the same organization as the product, of type `product_media` and correctly uploaded.
+    pub medias: Option<Vec<Uuid>>,
+    /// List of custom fields to attach.
+    pub attached_custom_fields: Vec<AttachedCustomFieldParams>,
+}

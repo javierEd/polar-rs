@@ -1,0 +1,19 @@
+{
+    "metadata": {},
+    "name": "<string>",
+    "description": "<string>",
+    "recurring_interval": "month",
+    "is_archived": true,
+    "prices": [
+        {
+            "id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c"
+        }
+    ],
+    "medias": ["00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c"],
+    "attached_custom_fields": [
+        {
+            "custom_field_id": "00a36059-1ca5-4bf2-8ceb-b9dc090ebb1c",
+            "required": true
+        }
+    ]
+}

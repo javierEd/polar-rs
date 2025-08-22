@@ -264,7 +264,7 @@ impl Polar {
     /// Scopes: `products:write`
     ///
     /// Reference: <https://docs.polar.sh/api-reference/products/update>
-    pub async fn update_product(&self, id: Uuid, params: &ProductParams) -> PolarResult<Product> {
+    pub async fn update_product(&self, id: Uuid, params: &UpdateProductParams) -> PolarResult<Product> {
         self.patch(&format!("products/{id}"), params).await
     }
 
@@ -594,7 +594,7 @@ mod tests {
 
         let polar = get_test_polar(mock.uri());
 
-        let params = get_fixture("product_params");
+        let params = get_fixture("update_product_params");
 
         let result = polar.update_product(product_id, &params).await;
 
@@ -614,7 +614,7 @@ mod tests {
 
         let polar = get_test_polar(mock.uri());
 
-        let params = get_fixture("product_params");
+        let params = get_fixture("update_product_params");
 
         let result = polar.update_product(product_id, &params).await;
 
