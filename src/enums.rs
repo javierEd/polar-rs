@@ -28,6 +28,20 @@ pub enum BillingAddressField {
     Disabled,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum CheckoutSessionsSorting {
+    CreatedAt,
+    #[serde(rename = "-created_at")]
+    CreatedAtDesc,
+    ExpiresAt,
+    #[serde(rename = "-expires_at")]
+    ExpiresAtDesc,
+    Status,
+    #[serde(rename = "-status")]
+    StatusDesc,
+}
+
 #[derive(Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum CheckoutSessionStatus {
@@ -125,6 +139,20 @@ pub enum PriceType {
     Recurring,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ProductsSorting {
+    CreatedAt,
+    #[serde(rename = "-created_at")]
+    CreatedAtDesc,
+    ExpiresAt,
+    #[serde(rename = "-expires_at")]
+    ExpiresAtDesc,
+    Status,
+    #[serde(rename = "-status")]
+    StatusDesc,
+}
+
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum ProrationBehavior {
@@ -137,20 +165,6 @@ pub enum ProrationBehavior {
 pub enum RecurringInterval {
     Month,
     Year,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum Sorting {
-    CreatedAt,
-    #[serde(rename = "-created_at")]
-    CreatedAtDesc,
-    ExpiresAt,
-    #[serde(rename = "-expires_at")]
-    ExpiresAtDesc,
-    Status,
-    #[serde(rename = "-status")]
-    StatusDesc,
 }
 
 #[derive(Deserialize)]
