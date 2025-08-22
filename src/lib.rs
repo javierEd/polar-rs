@@ -304,6 +304,15 @@ impl Polar {
     pub async fn create_meter(&self, params: &MeterParams) -> PolarResult<Meter> {
         self.post("meters", params).await
     }
+
+    /// **Get a meter by ID.**
+    ///
+    /// Scopes: `meters:read` `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/get>
+    pub async fn get_meter(&self, id: Uuid) -> PolarResult<Meter> {
+        self.get(&format!("meters/{id}")).await
+    }
 }
 
 #[cfg(test)]
@@ -728,6 +737,42 @@ mod tests {
         let params = get_fixture("meter_params");
 
         let result = polar.create_meter(&params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_meter() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/meters/{}", meter_id),
+            200,
+            get_fixture::<Value>("meter"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_meter(meter_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_meter() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/meters/{}", meter_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_meter(meter_id).await;
 
         assert!(result.is_err());
     }
