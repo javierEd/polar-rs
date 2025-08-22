@@ -313,11 +313,11 @@ pub struct Discount {
 #[derive(Default, Serialize)]
 pub struct ListCheckoutSessionsParams {
     /// Filter by organization ID.
-    pub organization_id: Option<Uuid>,
+    pub organization_id: Option<Vec<Uuid>>,
     /// Filter by product ID.
-    pub product_id: Option<Uuid>,
+    pub product_id: Option<Vec<Uuid>>,
     /// Filter by customer ID.
-    pub customer_id: Option<Uuid>,
+    pub customer_id: Option<Vec<Uuid>>,
     /// Filter by checkout session status.
     pub status: Option<CheckoutSessionStatus>,
     /// Filter by customer email.
@@ -337,9 +337,9 @@ pub struct ListCheckoutSessionsParams {
 #[derive(Default, Serialize)]
 pub struct ListProductsParams {
     /// Filter by product ID.
-    pub id: Option<Uuid>,
+    pub id: Option<Vec<Uuid>>,
     /// Filter by organization ID.
-    pub organization_id: Option<Uuid>,
+    pub organization_id: Option<Vec<Uuid>>,
     /// Filter by product name.
     pub query: Option<String>,
     /// Filter on archived products.
@@ -347,7 +347,7 @@ pub struct ListProductsParams {
     /// Filter on recurring products. If `true`, only subscriptions tiers are returned. If `false`, only one-time purchase products are returned.
     pub is_recurring: Option<bool>,
     /// Filter products granting specific benefit.
-    pub benefit_id: Option<Uuid>,
+    pub benefit_id: Option<Vec<Uuid>>,
     /// Page number, defaults to 1.
     ///
     /// Required range: `x > 0`
@@ -358,6 +358,34 @@ pub struct ListProductsParams {
     pub limit: Option<u8>,
     /// Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign - before the criteria name to sort by descending order.
     pub sorting: Option<Vec<ProductsSorting>>,
+    /// Filter by metadata key-value pairs.
+    pub metadata: Option<HashMap<String, String>>,
+}
+
+#[derive(Default, Serialize)]
+pub struct ListSubscriptionsParams {
+    /// Filter by organization ID.
+    pub organization_id: Option<Vec<Uuid>>,
+    /// Filter by product ID.
+    pub product_id: Option<Vec<Uuid>>,
+    /// Filter by customer ID.
+    pub customer_id: Option<Vec<Uuid>>,
+    /// Filter by customer external ID.
+    pub external_customer_id: Option<Vec<String>>,
+    /// Filter by discount ID.
+    pub discount_id: Option<Vec<Uuid>>,
+    /// Filter by active or inactive subscription.
+    pub active: Option<bool>,
+    /// Page number, defaults to 1.
+    ///
+    /// Required range: `x > 0`
+    pub page: Option<usize>,
+    /// Size of a page, defaults to 10. Maximum is 100.
+    ///
+    /// Required range: `x > 0`
+    pub limit: Option<u8>,
+    /// Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign - before the criteria name to sort by descending order.
+    pub sorting: Option<Vec<SubscriptionsSorting>>,
     /// Filter by metadata key-value pairs.
     pub metadata: Option<HashMap<String, String>>,
 }

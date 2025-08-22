@@ -145,12 +145,15 @@ pub enum ProductsSorting {
     CreatedAt,
     #[serde(rename = "-created_at")]
     CreatedAtDesc,
-    ExpiresAt,
-    #[serde(rename = "-expires_at")]
-    ExpiresAtDesc,
-    Status,
-    #[serde(rename = "-status")]
-    StatusDesc,
+    Name,
+    #[serde(rename = "-name")]
+    NameDesc,
+    PriceAmountType,
+    #[serde(rename = "-price_amount_type")]
+    PriceAmountTypeDesc,
+    PriceAmount,
+    #[serde(rename = "-price_amount")]
+    PriceAmountDesc,
 }
 
 #[derive(Deserialize, Serialize)]
@@ -165,6 +168,32 @@ pub enum ProrationBehavior {
 pub enum RecurringInterval {
     Month,
     Year,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SubscriptionsSorting {
+    Customer,
+    #[serde(rename = "-customer")]
+    CustomerDesc,
+    Status,
+    #[serde(rename = "-status")]
+    StatusDesc,
+    StartedAt,
+    #[serde(rename = "-started_at")]
+    StartedAtDesc,
+    CurrentPeriodEnd,
+    #[serde(rename = "-current_period_end")]
+    CurrentPeriodEndDesc,
+    Amount,
+    #[serde(rename = "-amount")]
+    AmountDesc,
+    Product,
+    #[serde(rename = "-product")]
+    ProductDesc,
+    Discount,
+    #[serde(rename = "-discount")]
+    DiscountDesc,
 }
 
 #[derive(Deserialize)]
