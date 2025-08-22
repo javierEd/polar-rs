@@ -223,6 +223,15 @@ impl Polar {
         self.get(&format!("subscriptions/{id}")).await
     }
 
+    /// **List subscriptions.**
+    ///
+    /// Scopes: `subscriptions:read` `subscriptions:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/subscriptions/list>
+    pub async fn list_subscriptions(&self, params: &ListSubscriptionsParams) -> PolarResult<Page<Subscription>> {
+        self.get_with_params("subscriptions", params).await
+    }
+
     /// **Update a subscription.**
     ///
     /// Scopes: `subscriptions:write`
@@ -450,6 +459,17 @@ mod tests {
         let result = polar.get_subscription(subscription_id).await;
 
         assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_list_subscriptions() {
+        let mock = get_mock("GET", "/subscriptions", 200, get_fixture::<Value>("subscriptions_list")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.list_subscriptions(&ListSubscriptionsParams::default()).await;
+
+        assert!(result.is_ok());
     }
 
     #[tokio::test]
