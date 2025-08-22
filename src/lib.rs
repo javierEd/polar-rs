@@ -6,7 +6,7 @@ use std::fmt::Display;
 use reqwest::{IntoUrl, StatusCode};
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{Value, json};
 use uuid::Uuid;
 
 mod enums;
@@ -266,6 +266,16 @@ impl Polar {
     /// Reference: <https://docs.polar.sh/api-reference/products/update>
     pub async fn update_product(&self, id: Uuid, params: &ProductParams) -> PolarResult<Product> {
         self.patch(&format!("products/{id}"), params).await
+    }
+
+    /// **Update benefits granted by a product..**
+    ///
+    /// Scopes: `products:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/products/update-benefits>
+    pub async fn update_product_benefits(&self, id: Uuid, benefits: Vec<Uuid>) -> PolarResult<Product> {
+        self.patch(&format!("products/{id}/benefits"), &json!({ "benefits": benefits }))
+            .await
     }
 }
 
@@ -607,6 +617,42 @@ mod tests {
         let params = get_fixture("product_params");
 
         let result = polar.update_product(product_id, &params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_update_product_benefits() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/products/{}/benefits", product_id),
+            200,
+            get_fixture::<Value>("product"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.update_product_benefits(product_id, vec![Uuid::new_v4()]).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_update_product_benefits() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/products/{}/benefits", product_id),
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.update_product_benefits(product_id, vec![Uuid::new_v4()]).await;
 
         assert!(result.is_err());
     }

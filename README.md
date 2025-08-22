@@ -8,7 +8,7 @@
 
 ## Features
 
-### **Checkouts**
+### Checkouts
 
 | Description                          | Status |
 | ------------------------------------ | ------ |
@@ -20,7 +20,7 @@
 | Update checkout session from client  | ⏳     |
 | Confirm checkout session from client | ⏳     |
 
-### **Subscriptions**
+### Subscriptions
 
 | Description         | Status |
 | ------------------- | ------ |
@@ -36,8 +36,8 @@
 | Get product             | ✅     |
 | List products           | ✅     |
 | Create product          | ✅     |
-| Update product          | ⏳     |
-| Update product benefits | ⏳     |
+| Update product          | ✅     |
+| Update product benefits | ✅     |
 
 ## Getting started
 
