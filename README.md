@@ -34,7 +34,7 @@
 | Description             | Status |
 | ----------------------- | ------ |
 | Get product             | ✅     |
-| List products           | ⏳     |
+| List products           | ✅     |
 | Create product          | ✅     |
 | Update product          | ⏳     |
 | Update product benefits | ⏳     |
