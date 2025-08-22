@@ -258,6 +258,15 @@ impl Polar {
     pub async fn create_product(&self, params: &ProductParams) -> PolarResult<Product> {
         self.post("products", params).await
     }
+
+    /// **Update a product.**
+    ///
+    /// Scopes: `products:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/products/update>
+    pub async fn update_product(&self, id: Uuid, params: &ProductParams) -> PolarResult<Product> {
+        self.patch(&format!("products/{id}"), params).await
+    }
 }
 
 #[cfg(test)]
@@ -558,6 +567,46 @@ mod tests {
         let params = get_fixture("product_params");
 
         let result = polar.create_product(&params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_update_product() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/products/{}", product_id),
+            200,
+            get_fixture::<Value>("product"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("product_params");
+
+        let result = polar.update_product(product_id, &params).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_update_product() {
+        let product_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/products/{}", product_id),
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("product_params");
+
+        let result = polar.update_product(product_id, &params).await;
 
         assert!(result.is_err());
     }
