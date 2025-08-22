@@ -473,6 +473,16 @@ pub struct Product {
     pub attached_custom_fields: Vec<AttachedCustomField>,
 }
 
+#[derive(Default, Deserialize, Serialize)]
+pub struct ProductParams {
+    /// The name of the product.
+    ///
+    /// Minimum length: `3`
+    pub name: String,
+    /// The recurring interval of the product. If `None`, the product is a one-time purchase
+    pub recurring_interval: Option<RecurringInterval>,
+}
+
 #[derive(Deserialize)]
 pub struct Subscription {
     /// Creation timestamp of the object.

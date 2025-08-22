@@ -240,6 +240,15 @@ impl Polar {
     pub async fn revoke_subscription(&self, id: Uuid) -> PolarResult<Subscription> {
         self.delete(&format!("subscriptions/{id}")).await
     }
+    
+    /// **Create a product.**
+    ///
+    /// Scopes: `products:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/products/create>
+    pub async fn create_product(&self, params: &ProductParams) -> PolarResult<Product> {
+        self.post("products", params).await
+    }
 }
 
 #[cfg(test)]

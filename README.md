@@ -29,6 +29,16 @@
 | Update subscription | ✅     |
 | Revoke subscription | ✅     |
 
+### Products
+
+| Description              | Status |
+| ------------------------ | ------ |
+| Get product              | ⏳     |
+| List products            | ⏳     |
+| Create product           | ⏳     |
+| Update product           | ⏳     |
+| Update product beneficts | ⏳     |
+
 ## Getting started
 
 - Installation
