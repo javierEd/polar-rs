@@ -320,7 +320,7 @@ impl Polar {
     ///
     /// Reference: <https://docs.polar.sh/api-reference/meters/list>
     pub async fn list_meters(&self, params: &ListMetersParams) -> PolarResult<Page<Meter>> {
-        self.get_with_params("products", params).await
+        self.get_with_params("meters", params).await
     }
 }
 
