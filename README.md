@@ -45,7 +45,7 @@
 | -------------------- | ------ |
 | Create meter         | ✅     |
 | Get meter            | ✅     |
-| List meters          | ⏳     |
+| List meters          | ✅     |
 | Update meter         | ⏳     |
 | Get meter quantities | ⏳     |
 

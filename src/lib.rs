@@ -313,6 +313,15 @@ impl Polar {
     pub async fn get_meter(&self, id: Uuid) -> PolarResult<Meter> {
         self.get(&format!("meters/{id}")).await
     }
+
+    /// **List meters.**
+    ///
+    /// Scopes: `meters:read` `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/list>
+    pub async fn list_meters(&self, params: &ListMetersParams) -> PolarResult<Page<Meter>> {
+        self.get_with_params("meters", params).await
+    }
 }
 
 #[cfg(test)]
@@ -775,5 +784,16 @@ mod tests {
         let result = polar.get_meter(meter_id).await;
 
         assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_list_meters() {
+        let mock = get_mock("GET", "/meters", 200, get_fixture::<Value>("meters_list")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.list_meters(&ListMetersParams::default()).await;
+
+        assert!(result.is_ok());
     }
 }

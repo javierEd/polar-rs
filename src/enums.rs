@@ -126,6 +126,17 @@ pub enum MeterFilterOperator {
     NotLike,
 }
 
+#[derive(Serialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MetersSorting {
+    CreatedAt,
+    #[serde(rename = "-created_at")]
+    CreatedAtDesc,
+    Name,
+    #[serde(rename = "-name")]
+    NameDesc,
+}
+
 #[derive(Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum PaymentProcessor {

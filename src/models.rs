@@ -335,6 +335,26 @@ pub struct ListCheckoutSessionsParams {
 }
 
 #[derive(Default, Serialize)]
+pub struct ListMetersParams {
+    /// Filter by organization ID.
+    pub organization_id: Option<Vec<Uuid>>,
+    /// Filter by name.
+    pub query: Option<String>,
+    /// Page number, defaults to 1.
+    ///
+    /// Required range: `x > 0`
+    pub page: Option<usize>,
+    /// Size of a page, defaults to 10. Maximum is 100.
+    ///
+    /// Required range: `x > 0`
+    pub limit: Option<u8>,
+    /// Sorting criterion. Several criteria can be used simultaneously and will be applied in order. Add a minus sign - before the criteria name to sort by descending order.
+    pub sorting: Option<Vec<MetersSorting>>,
+    /// Filter by metadata key-value pairs.
+    pub metadata: Option<HashMap<String, String>>,
+}
+
+#[derive(Default, Serialize)]
 pub struct ListProductsParams {
     /// Filter by product ID.
     pub id: Option<Vec<Uuid>>,
