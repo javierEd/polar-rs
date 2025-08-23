@@ -313,6 +313,15 @@ impl Polar {
     pub async fn get_meter(&self, id: Uuid) -> PolarResult<Meter> {
         self.get(&format!("meters/{id}")).await
     }
+
+    /// **List meters.**
+    ///
+    /// Scopes: `meters:read` `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/list>
+    pub async fn list_meters(&self, params: &ListMetersParams) -> PolarResult<Page<Meter>> {
+        self.get_with_params("products", params).await
+    }
 }
 
 #[cfg(test)]
