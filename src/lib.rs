@@ -776,4 +776,15 @@ mod tests {
 
         assert!(result.is_err());
     }
+
+    #[tokio::test]
+    async fn should_list_meters() {
+        let mock = get_mock("GET", "/meters", 200, get_fixture::<Value>("meters_list")).await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.list_meters(&ListMetersParams::default()).await;
+
+        assert!(result.is_ok());
+    }
 }
