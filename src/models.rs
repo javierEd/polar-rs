@@ -489,6 +489,37 @@ pub struct MeterParams {
 }
 
 #[derive(Deserialize)]
+pub struct MeterQuantities {
+    pub quantities: Vec<MeterQuantity>,
+    /// The total quantity for the period.
+    pub total: usize,
+}
+
+#[derive(Default, Serialize)]
+pub struct MeterQuantitiesParams {
+    /// Start timestamp.
+    pub start_timestamp: Option<DateTime<Utc>>,
+    /// End timestamp.
+    pub end_timestamp: Option<DateTime<Utc>>,
+    //// Interval between two timestamps.
+    pub interval: Option<Interval>,
+    /// Filter by customer ID.
+    pub customer_id: Option<Vec<Uuid>>,
+    /// Filter by external customer ID.
+    pub external_customer_id: Option<Vec<String>>,
+    /// Filter by metadata key-value pairs.
+    pub metadata: Option<HashMap<String, String>>,
+}
+
+#[derive(Deserialize)]
+pub struct MeterQuantity {
+    /// The timestamp for the current period.
+    pub timestamp: DateTime<Utc>,
+    /// The quantity for the current period.
+    pub quantity: usize,
+}
+
+#[derive(Deserialize)]
 pub struct Page<T> {
     pub items: Vec<T>,
     pub pagination: Pagination,

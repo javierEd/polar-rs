@@ -96,6 +96,16 @@ pub enum DiscountType {
     Percentage,
 }
 
+#[derive(Deserialize, PartialEq, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum Interval {
+    Year,
+    Month,
+    Week,
+    Day,
+    Hour,
+}
+
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum MeterAggregationFunc {
