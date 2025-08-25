@@ -1,0 +1,17 @@
+{
+    "metadata": {},
+    "name": "<string>",
+    "filter": {
+        "conjunction": "and",
+        "clauses": [
+            {
+                "property": "<string>",
+                "operator": "eq",
+                "value": "<string>"
+            }
+        ]
+    },
+    "aggregation": {
+        "func": "count"
+    }
+}

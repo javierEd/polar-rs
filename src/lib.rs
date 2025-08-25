@@ -322,6 +322,15 @@ impl Polar {
     pub async fn list_meters(&self, params: &ListMetersParams) -> PolarResult<Page<Meter>> {
         self.get_with_params("meters", params).await
     }
+
+    /// **Update a meter.**
+    ///
+    /// Scopes: `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/update>
+    pub async fn update_meter(&self, id: Uuid, params: &UpdateMeterParams) -> PolarResult<Meter> {
+        self.patch(&format!("meters/{id}"), params).await
+    }
 }
 
 #[cfg(test)]
@@ -795,5 +804,45 @@ mod tests {
         let result = polar.list_meters(&ListMetersParams::default()).await;
 
         assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_update_meter() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/meters/{}", meter_id),
+            200,
+            get_fixture::<Value>("meter"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("update_meter_params");
+
+        let result = polar.update_meter(meter_id, &params).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_update_meter() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "PATCH",
+            &format!("/meters/{}", meter_id),
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let params = get_fixture("update_meter_params");
+
+        let result = polar.update_meter(meter_id, &params).await;
+
+        assert!(result.is_err());
     }
 }
