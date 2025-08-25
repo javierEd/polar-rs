@@ -174,7 +174,7 @@ pub enum ProrationBehavior {
     Prorate,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RecurringInterval {
     Month,

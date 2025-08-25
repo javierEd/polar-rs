@@ -711,6 +711,20 @@ pub struct SubscriptionParams {
 }
 
 #[derive(Deserialize, Serialize)]
+pub struct UpdateMeterParams {
+    /// Key-value object allowing you to store additional information.
+    pub metadata: HashMap<String, String>,
+    /// The name of the meter. Will be shown on customer's invoices and usage.
+    ///
+    /// Minimum length: `3`
+    pub name: Option<String>,
+    /// The filter to apply on events that'll be used to calculate the meter.
+    pub filter: Option<MeterFilter>,
+    /// The aggregation to apply on the filtered events to calculate the meter.
+    pub aggregation: Option<MeterAggregation>,
+}
+
+#[derive(Deserialize, Serialize)]
 pub struct UpdatePriceParams {
     /// If you want to keep the existing price.
     pub id: Option<Uuid>,
@@ -740,7 +754,7 @@ pub struct UpdateProductParams {
     /// The name of the product.
     ///
     /// Minimum length: `3`
-    pub name: String,
+    pub name: Option<String>,
     /// The description of the product.
     pub description: Option<String>,
     /// The recurring interval of the product. If `None`, the product is a one-time purchase
@@ -752,5 +766,5 @@ pub struct UpdateProductParams {
     /// List of file IDs. Each one must be on the same organization as the product, of type `product_media` and correctly uploaded.
     pub medias: Option<Vec<Uuid>>,
     /// List of custom fields to attach.
-    pub attached_custom_fields: Vec<AttachedCustomFieldParams>,
+    pub attached_custom_fields: Option<Vec<AttachedCustomFieldParams>>,
 }
