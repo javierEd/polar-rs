@@ -331,6 +331,15 @@ impl Polar {
     pub async fn update_meter(&self, id: Uuid, params: &UpdateMeterParams) -> PolarResult<Meter> {
         self.patch(&format!("meters/{id}"), params).await
     }
+
+    /// **Get quantities of a meter over a time period.**
+    ///
+    /// Scopes: `meters:read` `meters:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/meters/get-quantities>
+    pub async fn get_meter_quantities(&self, id: Uuid, params: &MeterQuantitiesParams) -> PolarResult<MeterQuantities> {
+        self.get_with_params(&format!("meters/{id}/quantities"), params).await
+    }
 }
 
 #[cfg(test)]
@@ -842,6 +851,46 @@ mod tests {
         let params = get_fixture("update_meter_params");
 
         let result = polar.update_meter(meter_id, &params).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_meter_quantities() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/meters/{}/quantities", meter_id),
+            200,
+            get_fixture::<Value>("meter_quantities"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar
+            .get_meter_quantities(meter_id, &MeterQuantitiesParams::default())
+            .await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_meter_quantities() {
+        let meter_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/meters/{}/quantities", meter_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar
+            .get_meter_quantities(meter_id, &MeterQuantitiesParams::default())
+            .await;
 
         assert!(result.is_err());
     }

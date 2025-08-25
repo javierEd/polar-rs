@@ -47,7 +47,7 @@
 | Get meter            | ✅     |
 | List meters          | ✅     |
 | Update meter         | ✅     |
-| Get meter quantities | ⏳     |
+| Get meter quantities | ✅     |
 
 ## Getting started
 
