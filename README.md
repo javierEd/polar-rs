@@ -39,6 +39,14 @@
 | Update product          | ✅     |
 | Update product benefits | ✅     |
 
+### Events
+
+| Description   | Status |
+| ------------- | ------ |
+| Ingest events | ✅     |
+| Get event     | ⏳     |
+| List events   | ⏳     |
+
 ### Meters
 
 | Description          | Status |
