@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Default, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum AmountType {
+    #[default]
     Fixed,
     Custom,
     Free,

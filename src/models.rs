@@ -310,6 +310,20 @@ pub struct Discount {
     pub code: Option<String>,
 }
 
+#[derive(Serialize)]
+pub struct EventParams {
+    /// The name of the event.
+    pub name: String,
+    /// ID of the customer in your Polar organization associated with the event.
+    pub customer_id: Option<Uuid>,
+    /// Key-value object allowing you to store additional information.
+    pub metadata: HashMap<String, String>,
+    /// The timestamp of the event.
+    pub timestamp: DateTime<Utc>,
+    /// The ID of the organization owning the event. **Required unless you use an organization token.**
+    pub organization_id: Option<Uuid>,
+}
+
 #[derive(Default, Serialize)]
 pub struct ListCheckoutSessionsParams {
     /// Filter by organization ID.
@@ -573,7 +587,7 @@ pub struct PriceMeter {
     pub name: String,
 }
 
-#[derive(Deserialize, Serialize)]
+#[derive(Default, Deserialize, Serialize)]
 pub struct PriceParams {
     pub amount_type: AmountType,
     /// The currency. Not required for `amount_type: Free`.

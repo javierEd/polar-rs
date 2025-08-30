@@ -296,6 +296,17 @@ impl Polar {
             .await
     }
 
+    /// **Ingest batch of events.**
+    ///
+    /// Scopes: `events:write`
+    ///
+    /// Reference: <https://docs.polar.sh/api-reference/events/ingest>
+    pub async fn ingest_events(&self, events: Vec<EventParams>) -> PolarResult<i64> {
+        self.post("events/ingest", &json!({ "events": events }))
+            .await
+            .map(|resp: Value| resp["inserted"].as_i64().unwrap())
+    }
+
     /// **Create a meter.**
     ///
     /// Scopes: `meters:write`
@@ -738,6 +749,32 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.update_product_benefits(product_id, vec![Uuid::new_v4()]).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_ingest_events() {
+        let mock = get_mock("POST", "/events/ingest", 201, get_fixture::<Value>("events_inserted")).await;
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.ingest_events(vec![]).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_ingest_events() {
+        let mock = get_mock(
+            "POST",
+            "/events/ingest",
+            422,
+            get_fixture::<Value>("unprocessable_entity"),
+        )
+        .await;
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.ingest_events(vec![]).await;
 
         assert!(result.is_err());
     }
