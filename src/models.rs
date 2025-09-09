@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 use url::Url;
 use uuid::Uuid;
 
@@ -308,6 +309,27 @@ pub struct Discount {
     pub id: Uuid,
     pub name: String,
     pub code: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub struct Event {
+    // The ID of the object.
+    pub id: Uuid,
+    // The timestamp of the event.
+    pub timestamp: DateTime<Utc>,
+    // The ID of the organization owning the event.
+    pub organization_id: Uuid,
+    // ID of the customer in your Polar organization associated with the event.
+    pub customer_id: Option<Uuid>,
+    // The customer associated with the event. A customer in an organization.
+    pub customer: Option<Customer>,
+    // ID of the customer in your system associated with the event.
+    pub external_customer_id: Option<String>,
+    // The source of the event. `system` events are created by Polar. `user` events are the one you create through our ingestion API.
+    pub source: String,
+    // The name of the event.
+    pub name: String,
+    pub metadata: HashMap<String, Value>,
 }
 
 #[derive(Serialize)]

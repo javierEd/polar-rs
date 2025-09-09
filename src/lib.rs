@@ -307,6 +307,15 @@ impl Polar {
             .map(|resp: Value| resp["inserted"].as_i64().unwrap())
     }
 
+    // **Get an event by ID.**
+    //
+    // Scopes: `events:read` `events:write`
+    //
+    // Reference: <https://docs.polar.sh/api-reference/events/get>
+    pub async fn get_event(&self, id: Uuid) -> PolarResult<Event> {
+        self.get(&format!("events/{id}")).await
+    }
+
     /// **Create a meter.**
     ///
     /// Scopes: `meters:write`
@@ -775,6 +784,42 @@ mod tests {
         let polar = get_test_polar(mock.uri());
 
         let result = polar.ingest_events(vec![]).await;
+
+        assert!(result.is_err());
+    }
+
+    #[tokio::test]
+    async fn should_get_event() {
+        let event_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/events/{}", event_id),
+            200,
+            get_fixture::<Value>("event"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_event(event_id).await;
+
+        assert!(result.is_ok());
+    }
+
+    #[tokio::test]
+    async fn should_not_get_event() {
+        let event_id = Uuid::new_v4();
+        let mock = get_mock(
+            "GET",
+            &format!("/events/{}", event_id),
+            404,
+            get_fixture::<Value>("not_found"),
+        )
+        .await;
+
+        let polar = get_test_polar(mock.uri());
+
+        let result = polar.get_event(event_id).await;
 
         assert!(result.is_err());
     }
