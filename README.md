@@ -44,7 +44,7 @@
 | Description   | Status |
 | ------------- | ------ |
 | Ingest events | ✅     |
-| Get event     | ⏳     |
+| Get event     | ✅     |
 | List events   | ⏳     |
 
 ### Meters
