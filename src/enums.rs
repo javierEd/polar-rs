@@ -188,6 +188,8 @@ pub enum ProrationBehavior {
 #[derive(Deserialize, PartialEq, Serialize)]
 #[serde(rename_all = "lowercase")]
 pub enum RecurringInterval {
+    Day,
+    Week,
     Month,
     Year,
 }
@@ -226,6 +228,6 @@ pub enum SubscriptionStatus {
     Trialing,
     Active,
     PastDue,
-    Cancelled,
+    Canceled,
     Unpaid,
 }
