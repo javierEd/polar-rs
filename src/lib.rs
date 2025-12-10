@@ -1,7 +1,9 @@
 #![doc = include_str!("../README.md")]
 
+use regex::Regex;
 use std::error::Error;
 use std::fmt::Display;
+use std::sync::LazyLock;
 
 use reqwest::{IntoUrl, StatusCode};
 use serde::de::DeserializeOwned;
@@ -14,6 +16,8 @@ mod models;
 
 pub use enums::*;
 pub use models::*;
+
+static REGEX_QUERY_ARRAY: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"\[[0-9]+\]").unwrap());
 
 #[derive(Debug, Deserialize)]
 pub enum PolarError {
@@ -118,14 +122,10 @@ impl Polar {
     {
         let mut url = self.base_url.join(path)?;
 
-        if let Ok(Value::Object(value)) = serde_json::to_value(params) {
-            let mut query_pairs = url.query_pairs_mut();
+        if let Ok(query) = serde_qs::to_string(params) {
+            let query = REGEX_QUERY_ARRAY.replace_all(&query, "");
 
-            value.iter().for_each(|(k, v)| {
-                if let Some(v) = v.as_str() {
-                    query_pairs.append_pair(k, v);
-                }
-            });
+            url.set_query(Some(&query));
         }
 
         let response = reqwest::Client::new()
